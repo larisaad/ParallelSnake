@@ -1,0 +1,77 @@
+APD - TEMA 1
+
+DANAILA LARISA ANDREEA 334CC
+
+
+Descriere solutie seriala:
+
+Pentru fiecare sarpe, parcurg matricea pentru a-i determina coada.
+Un element este coada, daca are encodingul sarpelui respectiv, nu este cap si are cel mult 1 vecin
+cu acelasi encoding. De ce doar unul? In enunt se specifica ca fiecare punct are cel mult 2 puncte 
+vecine cu acelasi encoding, incluzand si diagonalele.
+
+Un element este coada, daca are cel mult un punct vecin (excluzand diagonalele) de acelasi encoding.
+Daca ar avea 2 puncte vecine (excluzand diagonalele) cu acelasi encoding, acestea ar implica o 
+legatura intre ele, care va fi insesi diagonala cozii, ajungandu-se la concluzia ca acest element 
+ar avea 3 vecini(incluzand diagonalele) cu acelasi encoding, ceea ce contrazice cerinta.
+
+Facand cateva calcule, si luand cateva exemple, se ajunge usor la concluzia ca, daca un punct are 
+maxim 2 vecini de acelasi encoding, vecinii obtinandu-se prin varierea, alternativa sau simultana,
+a indicilor punctului, atunci daca punctul este coada, acesta va avea doar un vecin din acelasi
+sarpe, variand doar alternativ indicii sai.
+
+
+Retin intotdeauna o copie a vectorului de capuri si o copie a vectorului de cozi. Pentru fiecare 
+step al jocului, actualizez copiile si fac mutarea fiecarui sarpe. Variabila stop retine daca s-a
+ajuns la coliziune, si astfel jocul inceteaza. Daca stop e inca false, mut capul sarpelui curent,
+in functie de directia acestuia. Daca valoarea de la pozitia noului cap e 0, o ocup, suprascriind-o
+cu encodingul sarpelui. Daca valoarea e diferita de 0, inseamna ca exista un sarpe pe acea pozitie
+si am gasit o coliziune iar stop devine true.
+
+Daca nu am dat de coliziune, imi calculez noua coada, orientandu-ma dupa vecinul care are acelasi
+encoding ca mine. Acel vecin va deveni noua coada, iar pozitia cozii vechi este eliberata.
+
+La final, daca am descoperit o coliziune, imi restaurez capurile serpilor si matricea, folosind 
+copiile vectorilor de capuri si cozi.
+
+
+Paralelizarea:
+
+Am paralelizat copierea vectorilor in functiile folosite.
+
+Paralelizarea functiei run_simulation:
+
+Paralelizez parcurgerea matricei prin care imi determin cozile fiecarui sarpe, si for-ul care 
+parcurge serpii.
+
+In ceea ce priveste mutarea serpilor, o sa paralelizez realizarea mutarilor, la fiecare pas. Daca
+nu am coliziune, imi mut capul sarpelui. Completez valoarea de la noua pozitie a capului daca 
+acesta este 0. Daca nu e 0, detectez coliziunea. Daca se intampla ca 2 threaduri sa gaseasca,
+pentru serpi diferiti, acelasi cap, se va detecta coliziune.
+
+Daca nu s-a determinat nicio coliziune pana la acest pas, caut noua coada a sarpelui. Din moment ce
+threadurile cauta pentru serpi diferiti cozi, nu exista sansa sa se gaseasca aceeasi coada pentru
+serpi diferiti si ca mai multe threaduri sa scrie pe acea pozitie.
+
+La final, in caz de coliziune, paralelizez forul care restaureaza valorile anterioare pentru fiecare
+sarpe.
+
+Algoritmul serial se executa in 70.4494s pentru testul big_input, pentru 20000 de pasi.
+
+Timpii executiei paralele, pentru testul big_input si pentru 20000de pasi, sunt urmatorii:
+
+-> pe 2 threaduri: 65.2453s
+-> pe 4 threaduri: 33.7406s
+-> pe 8 threaduri: 17.0936s
+-> pe 12 threaduri: 11.7102s
+
+Se poate observa scalabilitatea prin faptul ca timpul de executie scade, cu cat sunt folosite mai 
+multe threaduri.
+
+
+
+
+
+
+
+
